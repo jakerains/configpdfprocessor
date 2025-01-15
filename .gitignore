@@ -33,9 +33,16 @@ ENV/
 
 # Output directory
 output/
+output2/
+
+# PDFs
+*.pdf
+temp_content.pdf
 
 # IDE specific files
 .idea/
 .vscode/
 *.swp
 *.swo 
+output2/Latitude 3140 4GB64GB Non Touch_spec.pdf
+output2/Latitude 3140 4GB128GB Non Touch_spec.pdf

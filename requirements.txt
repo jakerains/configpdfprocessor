@@ -4,3 +4,4 @@ fpdf==1.7.2
 openai==0.27.8
 markdown-table==2020.12.3
 python-dotenv==1.0.0
+PyPDF2==3.0.1

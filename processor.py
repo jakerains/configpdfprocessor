@@ -170,7 +170,7 @@ class SpecificationPDF(FPDF):
         self.cell(0, 15, clean_text_for_pdf(structured_data['title']), ln=True, align='L')
         
         # Add price if available
-        if structured_data.get('price'):
+        if structured_data.get('price') and structured_data['price'] not in ['None', '', None]:
             self.set_font('Arial', 'B', 32)
             self.set_text_color(0, 0, 0)
             price = clean_text_for_pdf(str(structured_data['price']))
@@ -189,11 +189,19 @@ class SpecificationPDF(FPDF):
             self.set_fill_color(dark_gray if is_dark_row else light_gray)
             
             # Calculate row height based on content
-            lines = len(str(spec['value']).split('\n'))
-            current_row_height = max(row_height, row_height * lines)
+            value_lines = len(str(spec['value']).split('\n'))
+            # Get the actual width of the text to calculate wrapped lines
+            value_text = str(spec['value'])
+            text_width = self.get_string_width(value_text)
+            wrapped_lines = max(1, int(text_width / value_width) + 1)
+            total_lines = max(value_lines, wrapped_lines)
+            current_row_height = row_height * total_lines
             
-            # Draw background
-            self.rect(self.get_x(), self.get_y(), content_width, current_row_height, 'F')
+            # Store current position
+            start_y = self.get_y()
+            
+            # Draw background for the full height
+            self.rect(self.get_x(), start_y, content_width, current_row_height, 'F')
             
             # Add label
             self.set_text_color(text_gray)
@@ -205,7 +213,10 @@ class SpecificationPDF(FPDF):
             self.set_text_color(0)
             self.set_font('Arial', '', 10)
             value = clean_text_for_pdf(str(spec['value']))
-            self.multi_cell(value_width, current_row_height/lines, value, 0, 'L')
+            self.multi_cell(value_width, row_height, value, 0, 'L')
+            
+            # Move to next row position
+            self.set_y(start_y + current_row_height)
             
             is_dark_row = not is_dark_row
         
